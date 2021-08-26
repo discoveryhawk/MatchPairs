@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import time
 import traceback
 
 from aiogram.dispatcher import FSMContext
@@ -18,25 +19,29 @@ async def choice(call: CallbackQuery, state: FSMContext):
     try:
         data = await state.get_data()
         matrix_item = await get_matrix_item(call.data.split('#')[1])
-        if not matrix_item.is_hide:
+        if not matrix_item.is_hidden:
             return await call.answer('Ви вже відкрили цю карточку!')
         await call.answer()
+        if data.get("reaction_check") is False:
+            return
         matrix = matrix_item.matrix
         first_matrix_item_id = data.get('first_matrix_item_id')
         if not first_matrix_item_id:
-            await set_matrix_item_is_hide(matrix_item, False)
+            await set_matrix_item_is_hidden(matrix_item, False)
             await state.update_data(first_matrix_item_id=matrix_item.id)
             await call.message.edit_reply_markup(await get_inline_keyboard_matrix(matrix))
         else:
             await state.reset_data()
-            await set_matrix_item_is_hide(matrix_item, False)
+            await set_matrix_item_is_hidden(matrix_item, False)
             await call.message.edit_reply_markup(await get_inline_keyboard_matrix(matrix))
             first_matrix_item = await get_matrix_item(first_matrix_item_id)
             if matrix_item.value != first_matrix_item.value:
+                await state.update_data(reaction_check=False)
                 await asyncio.sleep(0.5)
-                await set_matrix_item_is_hide(matrix_item, True)
-                await set_matrix_item_is_hide(first_matrix_item, True)
-                return await call.message.edit_reply_markup(await get_inline_keyboard_matrix(matrix))
+                await set_matrix_item_is_hidden(matrix_item, True)
+                await set_matrix_item_is_hidden(first_matrix_item, True)
+                await call.message.edit_reply_markup(await get_inline_keyboard_matrix(matrix))
+                return await state.update_data(reaction_check=True)
             else:
                 await set_matrix_item_done(matrix_item)
                 await set_matrix_item_done(first_matrix_item)

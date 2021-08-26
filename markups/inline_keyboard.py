@@ -6,7 +6,7 @@ async def get_inline_keyboard_matrix(matrix):
     inline_keyboard.add(
         *[
             InlineKeyboardButton(
-                text=f'😈' if matrix_item.is_hide else matrix_item.value,
+                text=f'😈' if matrix_item.is_hidden else matrix_item.value,
                 callback_data=f'choice#{matrix_item.id}'
             ) for matrix_item in matrix.matrix_items
         ]

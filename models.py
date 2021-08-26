@@ -42,7 +42,7 @@ class MatrixItem(Base):
     row = Column(Integer)
     column = Column(Integer)
     value = Column(String(length=10))
-    is_hide = Column(Boolean, default=True)
+    is_hidden = Column(Boolean, default=True)
     is_done = Column(Boolean, default=False)
 
 

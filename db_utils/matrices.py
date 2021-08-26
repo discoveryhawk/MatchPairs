@@ -28,8 +28,8 @@ async def get_matrix_item(matrix_item_id):
     return session.query(MatrixItem).filter_by(id=matrix_item_id).first()
 
 
-async def set_matrix_item_is_hide(matrix_item, is_hide):
-    matrix_item.is_hide = is_hide
+async def set_matrix_item_is_hidden(matrix_item, is_hidden):
+    matrix_item.is_hidden = is_hidden
     session.add(matrix_item)
     session.commit()
 
